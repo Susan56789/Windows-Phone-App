@@ -7,9 +7,11 @@ using System.Windows.Controls;
 using System.Windows.Navigation;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
-using Grading_App.Resources;
+using ImageControl.Resources;
+using Microsoft.Phone.Tasks;
+using System.Windows.Media.Imaging;
 
-namespace Grading_App
+namespace ImageControl
 {
     public partial class MainPage : PhoneApplicationPage
     {
@@ -22,44 +24,46 @@ namespace Grading_App
             //BuildLocalizedApplicationBar();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void rdoCamera_Checked(object sender, RoutedEventArgs e)
         {
-            int regno;
-            int marks;
-            char grade;
-            grade=Convert.ToChar("");
-            string uname, ucode;
-            regno = int.Parse(txtRegNo.Text);
-            marks = int.Parse(txtMarks.Text);
-            uname = txtUnitName.Text;
-            ucode= txtUnitCode.Text;
-            if (marks<0||marks>100){
-                MessageBox.Show("Invalid Marks");
-                    txtMarks.Focus();
-                return;
-            }
-            else
-            {
-                //grading computation
-                if (marks>=70&&marks<=100){
-grade='A';
-                }
-                else if (marks>=60&&marks<=69){
-                    grade='B';
-                }
-                else if (marks>=50 && marks<=59){
-                    grade='C';
-                }
-                else if(marks >=40 && marks<=49){
-                    grade='D';
-                }
-                else if (marks>=0 && marks<=39){
-                    grade='F';
-                }
-            }
-            //program output
-            MessageBox.Show("Student Grade is:"+grade);
+            CameraCaptureTask cct = new CameraCaptureTask();
+            //Launch the Camera
+            cct.Show();
+            //Add Event   
+            cct.Completed += cct_Completed; 
         }
+
+        private void cct_Completed(object sender, PhotoResult e)
+        {
+           //Code will be executed when an image  
+            BitmapImage image=new BitmapImage();
+            image.SetSource(e.ChosenPhoto);
+            //display on image control
+            imgPhoto.Source = image;
+
+        }
+
+        private void rdoBrowse_Checked(object sender, RoutedEventArgs e)
+        {
+            PhotoChooserTask pct = new PhotoChooserTask();
+            //Launch photo chooser
+            pct.Show();
+
+            pct.Completed += pct_Completed;
+        }
+
+        private void pct_Completed(object sender, PhotoResult e)
+        {
+
+            //Code will be executed when an image  
+            BitmapImage image = new BitmapImage();
+            image.SetSource(e.ChosenPhoto);
+            //display on image control
+            imgPhoto.Source = image;
+
+        }
+
+        
 
         // Sample code for building a localized ApplicationBar
         //private void BuildLocalizedApplicationBar()
